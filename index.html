@@ -1,0 +1,128 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta http-equiv="X-UA-Compatible" content="IE=edge">
+  <style>
+  	body {
+		  margin: 0;
+		  font-size: 16px;
+		}
+
+		a {
+		  color: rgb(0, 188, 212);
+		  font-weight: bold;
+		  text-decoration: none;
+		  transition: color 0.4s;
+		}
+
+		a:hover {
+		  color: rgb(0, 110, 124);
+		}
+
+		.text-center {
+		  text-align: center;
+		}
+
+		.top-bar {
+		  padding: 10px 15px;
+		  margin-bottom: 50px;
+		}
+		.top-bar::after {
+		  content: '';
+		  display: block;
+		  clear: both;
+		}
+
+		.top-bar-left {
+		  float: left;
+		  font-size: 1.5em;
+		}
+
+		.top-bar-right {
+		  float: right;
+		}
+
+		.top-bar a,
+		.nav a {
+		  margin: 0 8px;
+		}
+
+		.container {
+		  margin: 0 auto;
+		  text-align: center;
+		  width: 700px;
+		}
+
+		.card-heading {
+		  padding: 16px;
+		}
+
+		.field-line, .button-line {
+		  padding: 16px;
+		}
+
+		.error-message {
+		  padding: 0 16px;
+		  color: tomato;
+		}
+
+		.success-message {
+		  padding: 0 16px;
+		  color: green;
+		}
+
+		.avatar {
+			font-size: 100px;
+		}
+
+		.profile-aboutme {
+			margin-bottom: 0px;
+		}
+
+		.topics-container {
+			display: flex; /*sets conatiner as a flex item*/
+			flex-flow: row wrap; /*sets flex direction* and  wrap*/
+			margin-right:auto; 
+			margin-left:auto;
+			width: 100%;	
+			font-size: 0;	/* remove inline-block spacing*/
+			padding: 5px 0 5px 0;
+		}
+
+		.topic-box { /*box becomes a flex child */
+			display: inline-block;
+			width: 150px;
+			text-align: center;
+			background-color: #dfdfdf;
+			margin-right: 5px;
+			margin-bottom: 5px;
+			border-radius: 3px;
+			font-size: 14px;
+			padding: 5px 5px;
+		}
+
+		.title {
+			background-color: rgb(0, 188, 212);
+		}
+
+		.current-position {
+			color: rgba(0, 0, 0, 0.7);
+		}
+
+  </style>
+
+  <title></title>
+  <!-- Support tablet -->
+  <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
+
+  <!-- Support Web Application mode -->
+  <meta name="apple-mobile-web-app-capable" content="no">
+  <meta name="format-detection" content="telephone=no">
+  <meta name="apple-mobile-web-app-status-bar-style" content="black">
+  <link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet">
+</head>
+<body>
+	<div id="app"></div>
+</body>
+</html>
