@@ -1,6 +1,7 @@
 import React, { PropTypes } from 'react';
 import ProfileForm from '../components/ProfileForm.jsx';
 import ProfileService from '../modules/ProfileService';
+import AuthService from '../modules/AuthService';
 
 class EditProfilePage extends React.Component {
   /**
@@ -13,14 +14,35 @@ class EditProfilePage extends React.Component {
     this.state = {
       errors: {},
       profile: {
+        id: '',
+        first_name: '',
+        last_name: '',
         email: '',
-        name: '',
-        password: ''
+        current_position: '',
+        about_you: '',
+        favorite_topics: []
       }
     };
 
     this.processForm = this.processForm.bind(this);
-    this.changeUser = this.changeUser.bind(this);
+    this.changeProfile = this.changeProfile.bind(this);
+  }
+
+  /**
+   * This method will be executed after initial rendering.
+   */
+  componentDidMount() {
+    const token = AuthService.getIdToken();
+    const userData = AuthService.getDecodedToken(token);
+
+    // this.props.params.id
+    ProfileService.getById(userData.user_id)
+      .then((response) => {
+          console.log(response);
+          this.setState({
+            profile: response.data
+          });
+        });
   }
 
   /**
@@ -33,10 +55,14 @@ class EditProfilePage extends React.Component {
     event.preventDefault();
 
     // create a string for an HTTP body message
-    /*
     ProfileService.update({
-        this.state.profile.field,
-        this.state.profile.field
+        id: this.state.profile.id, 
+        first_name: this.state.profile.first_name,
+        last_name: this.state.profile.last_name,
+        email: this.state.profile.email,
+        current_position: this.state.profile.current_position,
+        about_you: this.state.profile.about_you,
+        favorite_topics: this.state.profile.favorite_topics,
       })
       .then((response) => { 
         // change the component-container state
@@ -44,7 +70,7 @@ class EditProfilePage extends React.Component {
           errors: {}
         });
         // change the current URL to /
-        this.context.router.replace('/user');
+        this.context.router.replace('/view-profile');
       })
       .catch((xhr) => {
         // change the component state
@@ -55,7 +81,6 @@ class EditProfilePage extends React.Component {
           errors
         });
       });
-    */
   }
 
   /**

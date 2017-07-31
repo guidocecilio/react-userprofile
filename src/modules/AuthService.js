@@ -28,12 +28,15 @@ class AuthService {
 
   static isUserAuthenticated() {
     const idToken = AuthService.getIdToken();
+    if (idToken === 'undefined') {
+      return false;
+    }
     return !!idToken && !isTokenExpired(idToken);
   }
 
   static requireAuth(nextState, replace) {
     if (!AuthService.isUserAuthenticated()) {
-      replace({pathname: '/'});
+      replace('/');
     }
   }
 

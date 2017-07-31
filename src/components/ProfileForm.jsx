@@ -3,36 +3,153 @@ import { Link } from 'react-router';
 import { Card, CardText } from 'material-ui/Card';
 import RaisedButton from 'material-ui/RaisedButton';
 import TextField from 'material-ui/TextField';
+import SelectField from 'material-ui/SelectField';
+import MenuItem from 'material-ui/MenuItem';
+import AuthService from '../modules/AuthService';
+import TopicService from '../modules/TopicService';
 
+/**
+ * The rendering of selected items can be customized by providing a `selectionRenderer`.
+ */
+class SelectTopicField extends React.Component {
+  
+  state = {
+    values: [],
+  };
 
-const ProfileForm = ({
-  onSubmit,
-  onChange,
-  errors,
-  profile,
-}) => (
-  <Card className="container">
-    <form action="/" onSubmit={onSubmit}>
-      <h2 className="card-heading">Profile Form</h2>
+  handleChange = (event, index, values) => this.setState({values});
 
-      {errors.summary && <p className="error-message">{errors.summary}</p>}
+  selectionRenderer = (values) => {
+    switch (values.length) {
+      case 0:
+        return '';
+      case 1:
+        return this.props.topics.find((d) => d.id === values[0]).name;
+      default:
+        return `${values.length} topics selected`;
+    }
+  }
 
-      <div className="field-line">
-        <TextField
-          floatingLabelText="Name"
-          name="name"
-          errorText={errors.name}
-          onChange={onChange}
-          value={profile.fieldname}
-        />
-      </div>
+  menuItems(topics) {
+    return topics.map((topic) => (
+      <MenuItem
+        key={topic.id}
+        insetChildren={true}
+        checked={this.state.values.indexOf(topic.id) > -1}
+        value={topic.id}
+        primaryText={topic.name}
+      />
+    ));
+  }
 
-      <div className="button-line">
-        <RaisedButton type="submit" label="Update" primary />
-      </div>
-    </form>
-  </Card>
-);
+  componentWillReceiveProps(nextProps) {
+    this.setState({
+      values: nextProps.values.map((d) => d.id)
+    });
+  }
+
+  render() {
+    return (
+      <SelectField
+        multiple={true}
+        hintText="Favorite Topics"
+        value={this.state.values}
+        onChange={this.handleChange}
+        selectionRenderer={this.selectionRenderer}
+      >
+        {this.menuItems(this.props.topics)}
+      </SelectField>
+    );
+  }
+}
+
+SelectTopicField.propTypes = {
+  topics: PropTypes.array.isRequired
+};
+
+class ProfileForm extends React.Component {
+  state = {
+    topics: []
+  };
+
+  componentDidMount() {
+    TopicService.get()
+      .then((response) => {
+          console.log(response);
+          this.setState({
+            topics: response.data
+          });
+        });
+  }
+
+  render() {
+    return (
+      <Card className="container">
+        <form action="/" onSubmit={this.props.onSubmit}>
+          <h2 className="card-heading">Profile Form</h2>
+
+          {this.props.errors.summary && <p className="error-message">{this.props.errors.summary}</p>}
+
+          <div className="field-line">
+            <TextField
+              floatingLabelText="First Name"
+              name="first_name"
+              errorText={this.props.errors.first_name}
+              onChange={this.props.onChange}
+              value={this.props.profile.first_name}
+            />
+          </div>
+          <div className="field-line">
+            <TextField
+              floatingLabelText="Last Name"
+              name="last_name"
+              errorText={this.props.errors.last_name}
+              onChange={this.props.onChange}
+              value={this.props.profile.last_name}
+            />
+          </div>
+          <div className="field-line">
+            <TextField
+              floatingLabelText="Email"
+              name="email"
+              errorText={this.props.errors.email}
+              onChange={this.props.onChange}
+              value={this.props.profile.email}
+            />
+          </div>
+          <div className="field-line">
+            <TextField
+              floatingLabelText="Current Position"
+              name="current_position"
+              errorText={this.props.errors.current_position}
+              onChange={this.props.onChange}
+              value={this.props.profile.current_position}
+            />
+          </div>
+          <div className="field-line">
+            <TextField
+              floatingLabelText="About You"
+              name="about_you"
+              errorText={this.props.errors.about_you}
+              onChange={this.props.onChange}
+              value={this.props.profile.about_you}
+            />
+          </div>
+          <SelectTopicField 
+            values={this.props.profile.favorite_topics}
+            topics={this.state.topics}
+          />
+
+          <div className="button-line">
+            <RaisedButton type="submit" label="Update" primary />
+            <RaisedButton label="Cancel" secondary
+              style={{margin: 10}} href="/view-profile"/>
+          </div>
+        </form>
+      </Card>
+    );
+  }
+}
 
 ProfileForm.propTypes = {
   onSubmit: PropTypes.func.isRequired,

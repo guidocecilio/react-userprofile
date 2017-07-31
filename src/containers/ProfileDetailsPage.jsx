@@ -10,6 +10,7 @@ class ProfileDetailsPage extends React.Component {
    */
   constructor(props) {
     super(props);
+    console.log(this.props);
     this.state = {
       data: {}
     };
@@ -22,9 +23,9 @@ class ProfileDetailsPage extends React.Component {
     const token = AuthService.getIdToken();
     const userData = AuthService.getDecodedToken(token);
 
+    // this.props.params.id
     ProfileService.getById(userData.user_id)
       .then((response) => {
-          console.log(response);
           this.setState({
             data: response.data
           });

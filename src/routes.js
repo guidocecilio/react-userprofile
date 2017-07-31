@@ -4,6 +4,7 @@ import LoginPage from './containers/LoginPage.jsx';
 import EditProfilePage from './containers/EditProfilePage.jsx';
 import AuthService from './modules/AuthService';
 import ProfileDetailsPage from './containers/ProfileDetailsPage.jsx';
+import DashboardPage from './containers/DashboardPage.jsx';
 
 const routes = {
   // base component (wrapper for the whole application).
@@ -19,12 +20,15 @@ const routes = {
         }
       }
     },
-
     {
       path: '/login',
       component: LoginPage
     },
-
+    {
+      path: '/users',
+      onEnter: AuthService.requireAuth,
+      component: DashboardPage,
+    },
     {
       path: '/edit-profile',
       component: EditProfilePage
@@ -41,7 +45,6 @@ const routes = {
         replace('/'); 
       }
     }
-
   ]
 };
 

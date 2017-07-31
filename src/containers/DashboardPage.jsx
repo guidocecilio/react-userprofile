@@ -1,18 +1,17 @@
 import React from 'react';
 import AuthService from '../modules/AuthService';
-import Dashboard from '../components/Dashboard.jsx';
+import ListProfiles from '../components/ListProfiles.jsx';
+import UserService from '../modules/UserService';
 
 
 class DashboardPage extends React.Component {
-
   /**
    * Class constructor.
    */
   constructor(props) {
     super(props);
-
     this.state = {
-      secretData: ''
+      data: null
     };
   }
 
@@ -20,29 +19,23 @@ class DashboardPage extends React.Component {
    * This method will be executed after initial rendering.
    */
   componentDidMount() {
-    /*
-    const xhr = new XMLHttpRequest();
-    xhr.open('get', '/api/dashboard');
-    xhr.setRequestHeader('Content-type', 'application/x-www-form-urlencoded');
-    // set the authorization HTTP header
-    xhr.setRequestHeader('Authorization', `bearer ${AuthService.getIdToken()}`);
-    xhr.responseType = 'json';
-    xhr.addEventListener('load', () => {
-      if (xhr.status === 200) {
-        this.setState({
-          secretData: xhr.response.message
+    const token = AuthService.getIdToken();
+    const userData = AuthService.getDecodedToken(token);
+
+    UserService.get()
+      .then((response) => {
+          console.log(response);
+          this.setState({
+            data: response.data
+          });
         });
-      }
-    });
-    xhr.send();
-    */
   }
 
   /**
    * Render the component.
    */
   render() {
-    return (<Dashboard secretData={this.state.secretData} />);
+    return (<ListProfiles data={this.state.data} />);
   }
 
 }
