@@ -9,7 +9,11 @@ import AuthService from '../modules/AuthService';
 import TopicService from '../modules/TopicService';
 
 /**
- * The rendering of selected items can be customized by providing a `selectionRenderer`.
+ * The rendering of selected items can be customized by providing a
+ * `selectionRenderer`.
+ * 
+ * @class SelectTopicField
+ * @extends {React.Component}
  */
 class SelectTopicField extends React.Component {
   
@@ -17,8 +21,24 @@ class SelectTopicField extends React.Component {
     values: [],
   };
 
-  handleChange = (event, index, values) => this.setState({values});
+  /**
+   * 
+   * 
+   * @memberof SelectTopicField
+   */
+  handleChange = (event, index, values) => {
+    this.setState({values});
+    const newValues = this.props.topics.filter(
+      (topic) => values.indexOf(topic.id) > -1
+    );
+    this.props.onChange(null, newValues, this.props.name);
+  }
 
+  /**
+   * 
+   * 
+   * @memberof SelectTopicField
+   */
   selectionRenderer = (values) => {
     switch (values.length) {
       case 0:
@@ -30,6 +50,13 @@ class SelectTopicField extends React.Component {
     }
   }
 
+  /**
+   * 
+   * 
+   * @param {any} topics 
+   * @returns 
+   * @memberof SelectTopicField
+   */
   menuItems(topics) {
     return topics.map((topic) => (
       <MenuItem
@@ -42,20 +69,33 @@ class SelectTopicField extends React.Component {
     ));
   }
 
+  /**
+   * 
+   * 
+   * @param {any} nextProps 
+   * @memberof SelectTopicField
+   */
   componentWillReceiveProps(nextProps) {
     this.setState({
       values: nextProps.values.map((d) => d.id)
     });
   }
 
+  /**
+   * 
+   * 
+   * @returns 
+   * @memberof SelectTopicField
+   */
   render() {
     return (
       <SelectField
+        floatingLabelText="Favorite Topics"
         multiple={true}
-        hintText="Favorite Topics"
         value={this.state.values}
         onChange={this.handleChange}
         selectionRenderer={this.selectionRenderer}
+        style={{ textAlign: 'left' }}
       >
         {this.menuItems(this.props.topics)}
       </SelectField>
@@ -64,9 +104,17 @@ class SelectTopicField extends React.Component {
 }
 
 SelectTopicField.propTypes = {
-  topics: PropTypes.array.isRequired
+  topics: PropTypes.array.isRequired,
+  name: PropTypes.string.isRequired,
+  onChange: PropTypes.func.isRequired
 };
 
+/**
+ * 
+ * 
+ * @class ProfileForm
+ * @extends {React.Component}
+ */
 class ProfileForm extends React.Component {
   state = {
     topics: []
@@ -74,10 +122,9 @@ class ProfileForm extends React.Component {
 
   componentDidMount() {
     TopicService.get()
-      .then((response) => {
-          console.log(response);
+      .then((topics) => {
           this.setState({
-            topics: response.data
+            topics: topics
           });
         });
   }
@@ -130,15 +177,22 @@ class ProfileForm extends React.Component {
             <TextField
               floatingLabelText="About You"
               name="about_you"
+              multiLine={true}
+              rows={2}
               errorText={this.props.errors.about_you}
               onChange={this.props.onChange}
               value={this.props.profile.about_you}
+              style={{ textAlign: 'left' }}
             />
           </div>
-          <SelectTopicField 
-            values={this.props.profile.favorite_topics}
-            topics={this.state.topics}
-          />
+          <div className="field-line">
+            <SelectTopicField 
+              name="favorite_topics"
+              values={this.props.profile.favorite_topics}
+              topics={this.state.topics}
+              onChange={this.props.onChange}
+            />
+          </div>
 
           <div className="button-line">
             <RaisedButton type="submit" label="Update" primary />

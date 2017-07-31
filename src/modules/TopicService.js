@@ -14,9 +14,10 @@ class TopicService {
       }
       axios.get('/', config)
         .then((response) => {
-          resolve(response); 
+          return response.data; 
         })
-        .catch((error) => reject(error));
+        .then(resolve)
+        .catch(reject);
     })
   }
 }

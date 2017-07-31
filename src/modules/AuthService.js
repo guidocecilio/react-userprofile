@@ -51,7 +51,7 @@ class AuthService {
 
   static getDecodedToken(encodedToken) {
     if (!AuthService.isUserAuthenticated()) {
-      throw new Error('User it not authenticated');
+      return null;
     }
     return decode(encodedToken);  
   }

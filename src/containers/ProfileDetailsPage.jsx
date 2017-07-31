@@ -1,7 +1,9 @@
-import React from 'react';
+import React, { PropTypes } from 'react';
 import AuthService from '../modules/AuthService';
 import ProfileDetails from '../components/ProfileDetails.jsx';
 import ProfileService from '../modules/ProfileService';
+import TopicService from '../modules/TopicService';
+import { populate } from '../modules/utils';
 
 
 class ProfileDetailsPage extends React.Component {
@@ -22,14 +24,23 @@ class ProfileDetailsPage extends React.Component {
   componentDidMount() {
     const token = AuthService.getIdToken();
     const userData = AuthService.getDecodedToken(token);
+    if (!token || !userData) {
+      this.context.router.replace('/');
+    }
 
     // this.props.params.id
-    ProfileService.getById(userData.user_id)
-      .then((response) => {
-          this.setState({
-            data: response.data
-          });
-        });
+    Promise.all([
+      TopicService.get(),
+      ProfileService.getById(userData.user_id),
+    ])
+    .then(([topics, profile]) => {
+      profile.favorite_topics = profile.favorite_topics.map((d) => {
+        return populate(d, topics);
+      });
+      this.setState({
+        data: profile
+      });
+    });
   }
 
   /**
@@ -38,7 +49,11 @@ class ProfileDetailsPage extends React.Component {
   render() {
     return (<ProfileDetails data={this.state.data} />);
   }
-
 }
+
+
+ProfileDetailsPage.contextTypes = {
+  router: PropTypes.object.isRequired
+};
 
 export default ProfileDetailsPage;

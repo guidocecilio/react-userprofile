@@ -5,11 +5,12 @@ import Avatar from 'material-ui/Avatar';
 
 
 const ListProfiles = ({ data }) => (
-  <Card>
+  <Card className="container">
     <List>
       { data && data.map((user, index) => (
-        <ListItem
-          primaryText={user.first_name}
+        <ListItem style={{ textAlign: 'left'}}
+          primaryText={user.first_name + ' ' + user.last_name}
+          secondaryText={user.username}
         />
       ))
       }

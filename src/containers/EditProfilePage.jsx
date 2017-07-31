@@ -2,6 +2,8 @@ import React, { PropTypes } from 'react';
 import ProfileForm from '../components/ProfileForm.jsx';
 import ProfileService from '../modules/ProfileService';
 import AuthService from '../modules/AuthService';
+import TopicService from '../modules/TopicService';
+import { populate } from '../modules/utils';
 
 class EditProfilePage extends React.Component {
   /**
@@ -34,15 +36,23 @@ class EditProfilePage extends React.Component {
   componentDidMount() {
     const token = AuthService.getIdToken();
     const userData = AuthService.getDecodedToken(token);
+    if (!token || !userData) {
+      this.context.router.replace('/');
+    }
 
     // this.props.params.id
-    ProfileService.getById(userData.user_id)
-      .then((response) => {
-          console.log(response);
-          this.setState({
-            profile: response.data
-          });
-        });
+    Promise.all([
+      TopicService.get(),
+      ProfileService.getById(userData.user_id),
+    ])
+    .then(([topics, profile]) => {
+      profile.favorite_topics = profile.favorite_topics.map((d) => {
+        return populate(d, topics);
+      });
+      this.setState({
+        profile: profile
+      });
+    });
   }
 
   /**
@@ -62,7 +72,9 @@ class EditProfilePage extends React.Component {
         email: this.state.profile.email,
         current_position: this.state.profile.current_position,
         about_you: this.state.profile.about_you,
-        favorite_topics: this.state.profile.favorite_topics,
+        favorite_topics: this.state.profile.favorite_topics.map(
+          (d) => d.url
+        ),
       })
       .then((response) => { 
         // change the component-container state
@@ -88,10 +100,11 @@ class EditProfilePage extends React.Component {
    *
    * @param {object} event - the JavaScript event object
    */
-  changeProfile(event) {
-    const field = event.target.name;
+  changeProfile(event, data, fieldname) {
+    // if event == null the method has been directly invoked
+    const field = event ? event.target.name : fieldname;
     const profile = this.state.profile;
-    profile[field] = event.target.value;
+    profile[field] = event ? event.target.value : data;
     this.setState({
       profile
     });

@@ -19,9 +19,6 @@ class DashboardPage extends React.Component {
    * This method will be executed after initial rendering.
    */
   componentDidMount() {
-    const token = AuthService.getIdToken();
-    const userData = AuthService.getDecodedToken(token);
-
     UserService.get()
       .then((response) => {
           console.log(response);
